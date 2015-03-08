@@ -1,0 +1,152 @@
+#!/usr/bin/env bash
+# Description
+# Root script for the Webserver Administration suite
+
+
+#=============================================================================
+#===  Sanity Check
+#=============================================================================
+
+# Ensure bash is <= version 4.x
+# 4.x is required for dictionaries which are used for error codes and config 
+# options
+bash_version="$(bash --version | head -n1 | awk '{print $4}' | sed 's/\..*//')"
+if [[ "$bash_version" -lt 4 ]]; then
+  echo "This script requires bash <= 4.x." >&2
+fi
+
+
+#=============================================================================
+#===  Build global variables
+#=============================================================================
+
+# Get the absolute path of this executable
+origin_dir="$(pwd)"
+self_path="$(cd -P -- "$(dirname -- "$0")" && pwd -P)" && self_path="$self_path/$(basename -- "$0")"
+
+# resolve symlinks - this is the equivalent of "readlink -f", but also works with non-standard os x readlink.
+while [ -h "$self_path" ]; do
+  # 1) cd to directory of the symlink
+  # 2) cd to the directory of where the symlink points
+  # 3) get the pwd
+  # 4) append the basename
+  dir="$(dirname -- "$self_path")"
+  sym="$(readlink "$self_path")"
+  self_path="$(cd "$dir" && cd "$(dirname -- "$sym")" && pwd)/$(basename -- "$sym")"
+done
+cd "$origin_dir"
+self_dir=$(dirname $self_path)
+quiet="false"
+
+
+#=============================================================================
+#===  Import libraries and all commands
+#=============================================================================
+
+. "$self_dir/lib/boilerplate.sh"
+. "$self_dir/lib/error_codes.sh"
+. "$self_dir/lib/usage.sh"
+. "$self_dir/lib/config.sh"
+. "$self_dir/lib/output.sh"
+. "$self_dir/lib/helpers.sh"
+. "$self_dir/lib/version.sh"
+
+# Import all commands
+for command in $self_dir/commands/*.sh; do
+  . "$command"
+done
+
+
+#=============================================================================
+#===  Sanity checks
+#=============================================================================
+
+# This script is designed to be run by the $web_administrator_username.
+# Running as another user may create unexpected errors.
+if [[ "$(whoami)" != "${config[web_administrator_username]}" ]]; then
+  msg "ERROR" "Please run this script as '${config[web_administrator_username]}'."
+  exit "${error[bad_script_invocation]}"
+fi
+
+
+#=============================================================================
+#===  Parse invocation and run appropriate command(s)
+#=============================================================================
+
+# Fail without any arguments
+if [[ $# -eq 0 ]]; then
+  usage
+  exit "${error[no_args]}"
+fi
+
+# Check for quiet flag/option
+if [[ "$1" = "-q" || "$1" = "--quiet" || "$1" = "-qv" ]]; then
+  if [[ $# -gt 1 ]]; then
+    if [[ "$1" = "-qv" || "$2" = "-v" || "$2" = "--version" ]]; then
+      msg "Cannot print version info with -q/--quiet (quiet) flag set"
+      exit 0
+    fi
+  else
+    if [[ "$1" = "-qv" ]]; then
+      msg "Cannot print version info with -q/--quiet (quiet) flag set"
+      exit 0
+    fi
+  fi
+  quiet="true"
+  shift
+fi
+
+# Check for version flag/option
+if [[ $# -ge 1 ]]; then
+  if [[ "$1" = "-v" || "$1" = "--version" || "$1" = "-vq" ]]; then
+    if [[ $# -gt 1 ]]; then
+      if [[ "$1" = "-vq" || "$2" = "-q" || "$2" = "--quiet" ]]; then
+        msg "Cannot print version info with -q/--quiet (quiet) flag set"
+        exit 0
+      fi
+    else
+      if [[ "$1" = "-vq" ]]; then
+        msg "Cannot print version info with -q/--quiet (quiet) flag set"
+        exit 0
+      fi
+    fi
+    version
+    exit 0
+  fi
+fi
+
+# Run appropriate command
+if [[ $# -ge 1 ]]; then
+  case "$1" in
+    backup)
+      shift
+      _backup $@
+      ;;
+    help)
+      shift
+      if [[ $# -eq 1 ]]; then
+        usage $1
+      else
+        usage
+      fi
+      ;;
+    new)
+      shift
+      new $@
+      ;;
+    update)
+      shift
+      _update $@
+      ;;
+    *)
+      usage
+      exit $errorcode_invalid_args
+      ;;
+  esac
+else 
+  usage
+  exit $errorcode_invalid_args
+fi
+
+# Everything went well.
+exit 0
