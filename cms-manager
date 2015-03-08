@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Description
-# Root script for the Webserver Administration suite
+# Author: cbweaver (https://github.com/cbweaver)
+# Description: Take user input and redirect to appropriate command.
 
 
 #=============================================================================

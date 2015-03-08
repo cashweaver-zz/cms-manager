@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Author: cbweaver (https://github.com/cbweaver)
+# Description: Print usage information
 
 function all_usages {
   echo "$(basename $0) [options] [commands]" >&2

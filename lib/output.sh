@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-
-# Description:
-# A collection of functions that control output throughout wat
+# Author: cbweaver (https://github.com/cbweaver)
+# Description: Handle output to stdout and stderr
 
 reset_all="\033[0m"
 reset_bold="\033[21m"

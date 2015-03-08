@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Description:
-# TODO: Write description
+# Author: cbweaver (https://github.com/cbweaver)
+# Description: TODO
 
 function _command_name {
   #opt_string=":a"

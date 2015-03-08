@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Description:
-# Backup a website
+# Author: cbweaver (https://github.com/cbweaver)
+# Description: Create a backup of files and the database
 
 function _backup {
   #=============================================================================

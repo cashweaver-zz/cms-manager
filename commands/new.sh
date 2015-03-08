@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Description:
-# TODO: Write description
+# Author: cbweaver (https://github.com/cbweaver)
+# Description: Create a new instance of a CMS
 
 function new {
   short_options="fp"

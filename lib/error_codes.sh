@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Description:
-# Error codes
+# Author: cbweaver (https://github.com/cbweaver)
+# Description: Error codes
 
 declare -A error
 

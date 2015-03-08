@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Description:
-# A collection of functions
+# Author: cbweaver (https://github.com/cbweaver)
+# Description: Functions to make life easier
 
 # Check if a given directory is writable by a given user.
 #

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Description:
-# Print version of the script
+# Author: cbweaver (https://github.com/cbweaver)
+# Description: Print version
 
 function version {
-  msg "$(sed -n 4p "$self_dir/README.md")"
+  msg "$(sed -n 2p "$self_dir/README.md")"
 }

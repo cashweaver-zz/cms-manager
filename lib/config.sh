@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Version: 0.0.1
-# Description: Configuration variables.
+# Author: cbweaver (https://github.com/cbweaver)
+# Description: Configuration variables
 
 declare -A config
 

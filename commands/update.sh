@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Description:
-# Update a website
+# Author: cbweaver (https://github.com/cbweaver)
+# Description: Apply all pending updates
 
 function _update {
   #opt_string=":a"
