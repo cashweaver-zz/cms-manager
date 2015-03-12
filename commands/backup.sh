@@ -103,6 +103,13 @@ function _backup {
 
 # TODO
 function _backup_drupal {
+  if [[ $# -ne 2  ]]; then
+    msg "ERROR" "_backup_drupal takes two arguments:"
+    msg "ERROR" "  save_dir: The full path to the directory save the backup"
+    msg "ERROR" "  website_path: The full path to the directory to be backed up"
+    exit "${error[wrong_number_of_args]}"
+  fi
+
   local save_dir="$1"
   local website_path="$2"
 
@@ -124,14 +131,20 @@ function _backup_drupal {
 
 # TODO
 function _backup_wordpress {
-  local backup_dir_path="$1"
-  local website_owner="$2"
-  local website_path="$3"
+  if [[ $# -ne 2  ]]; then
+    msg "ERROR" "_backup_wordpress takes two arguments:"
+    msg "ERROR" "  save_dir: The full path to the directory save the backup"
+    msg "ERROR" "  website_path: The full path to the directory to be backed up"
+    exit "${error[wrong_number_of_args]}"
+  fi
 
-  local file_backup_destination="$backup_dir_path/$(date "+%Y-%m-%d-%H-%M-%S").tar.gz"
-  local sql_backup_destination="$backup_dir_path/$(date "+%Y-%m-%d-%H-%M-%S").sql"
+  local save_dir="$1"
+  local website_path="$2"
 
-  cd $website_path
+  local file_backup_destination="$save_dir/$(date "+%Y-%m-%d-%H-%M-%S").tar.gz"
+  local sql_backup_destination="$save_dir/$(date "+%Y-%m-%d-%H-%M-%S").sql"
+
+  cd "$website_path"
   wp db export $sql_backup_destination >/dev/null 2>&1
   tar -cvzf $file_backup_destination * >/dev/null 2>&1
 

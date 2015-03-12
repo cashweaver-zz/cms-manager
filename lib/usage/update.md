@@ -1,6 +1,7 @@
-update --website_path=PATH
+update -w PATH
   Update a given website.
 
   Required
   --------------------------------------------------------------------------------------------------
-  --website_path=[PATH]           Full path to website to be backed up.
+  Website Path
+    -w [PATH]           Full path to website to be updated.
