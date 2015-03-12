@@ -2,7 +2,6 @@
 # Author: cbweaver (https://github.com/cbweaver)
 # Description: Apply all pending updates
 
-# TODO
 function _update {
   # 1. Collect and test arguments
   # 2. Update

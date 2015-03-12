@@ -1,4 +1,4 @@
-new --[prebuild|fresh]
+new UNDER DEVELOPMENT
   Create a new website.
 
   Required

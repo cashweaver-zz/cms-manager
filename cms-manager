@@ -123,6 +123,10 @@ if [[ $# -ge 1 ]]; then
       shift
       _backup $@
       ;;
+    destroy)
+      shift
+      _destroy $@
+      ;;
     help)
       shift
       if [[ $# -eq 1 ]]; then

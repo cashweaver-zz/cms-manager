@@ -1,4 +1,4 @@
-backup [options] -w PATH -s PATH
+backup -w PATH -s PATH
   Backup the files and database for a given website.
 
   Required

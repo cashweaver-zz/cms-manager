@@ -193,3 +193,14 @@ function check_for_drush {
 function check_for_wp_cli {
   command -v wp >/dev/null 2>&1 || { echo >&2 "$(basename $0) requires wp-cli (wp) but it's either not installed or not in PATH.  Aborting."; exit 1; }
 }
+
+function count_to_three {
+  # Sleep to ensure the double-check isn't passed over by overzealous button mashing
+  echo -en "3"
+  sleep 1
+  echo -en "\r2"
+  sleep 1
+  echo -en "\r1"
+  sleep 1
+  echo -en "\r"
+}
