@@ -17,11 +17,11 @@ function _destroy {
   while getopts "$options" o; do
     case "${o}" in
       w)
-        website_path="${OPTARG}"
+        website_path="${OPTARG%/}"
         ;;
       *)
         echo "${o}"
-        usage update
+        usage destroy
         exit "${error[bad_arg]}"
         ;;
     esac
@@ -38,7 +38,7 @@ function _destroy {
   # 1. website_path must be set
   if [[ -z "$website_path" ]]; then
     msg "ERROR" "Missing path to website"
-    usage backup
+    usage destroy
     exit "${error[missing_required_args]}"
   fi
 
@@ -81,24 +81,30 @@ function _destroy {
   fi
 
   # Double check with user
-  msg "COMMENT" "Review the following. It was automatically detected and may be incorrect."
+  msg "COMMENT" "Review the following."
   msg "COMMENT" "Stop this script and destroy the website manually if the values below are incorrect."
   echo ""
   msg "COMMENT" "Please ensure you have a backup."
   echo ""
+  msg "COMMENT" "The following will be dropped:"
   msg "COMMENT" "    DB Name     : $db_name"
   msg "COMMENT" "    DB User Name: $db_user_name"
-  count_to_three
+  echo ""
+  msg "COMMENT" "The following will be deleted:"
+  msg "COMMENT" "    Website Path: $website_path"
+  count_from 9
   #read -t 1 -n 10000 discard
   read -p "Click [enter] to drop database and database user"
+  exit
 
+  # Drop database and database user
   msg "PROMPT" "MySQL: Please enter root password Mysql"
   echo ""
   mysql_command="drop database $db_name; drop user $db_user_name; drop user $db_user_name@localhost;"
   mysqlcmd_out=$(mysql -uroot -p -e "$CMD" 2>&1)
   mysqlcmd_rc=$?
   if [[ $mysqlcmd_rc -eq 0 ]]; then
-    msg "SUCCESS" "MySQL: Successfully created new db and users"
+    msg "SUCCESS" "MySQL: Successfully dropped db and db user"
   else
     msg "ERROR" "MySql error."
     msg "ERROR" "rc = $mysqlcmd_rc"
@@ -106,5 +112,6 @@ function _destroy {
     exit "${error[command_failed]}"
   fi
 
-  #TODO: remove files
+  msg "COMMENT" "Deleting all files within, and including, $website_path"
+  rm -rf "$website_path"
 }

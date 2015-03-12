@@ -194,13 +194,22 @@ function check_for_wp_cli {
   command -v wp >/dev/null 2>&1 || { echo >&2 "$(basename $0) requires wp-cli (wp) but it's either not installed or not in PATH.  Aborting."; exit 1; }
 }
 
-function count_to_three {
-  # Sleep to ensure the double-check isn't passed over by overzealous button mashing
-  echo -en "3"
-  sleep 1
-  echo -en "\r2"
-  sleep 1
-  echo -en "\r1"
-  sleep 1
+function count_from {
+  if [[ $# -ne 1  ]]; then
+    msg "ERROR" "count_from takes one argument:"
+    msg "ERROR" "  number: How high to count (integer)"
+    exit "${error[wrong_number_of_args]}"
+  fi
+
+  local re='^[0-9]+$'
+  if ! [[ $1 =~ $re ]]; then
+    msg "ERROR" "Not an integer: $1"
+    exit "${error[bad_arg]}"
+  fi
+
+  for (( i=$1; i>=1; i--)); do
+    echo -en "\r$i"
+    sleep 1
+  done
   echo -en "\r"
 }
