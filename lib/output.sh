@@ -28,7 +28,7 @@ if [[ $quiet = "false" ]]; then
   if [[ $# -eq 2 ]]; then
     case $1 in
       ERROR )
-        echo -e "$light_red$2$reset_all" >&2
+        echo -e "${light_red}ERROR: $2$reset_all" >&2
         ;;
       PROMPT )
         echo -en "$light_cyan$2$reset_all"

@@ -1,11 +1,10 @@
-backup [options] --website_path=PATH
+backup [options] -w PATH -s PATH
   Backup the files and database for a given website.
 
   Required
   --------------------------------------------------------------------------------------------------
-  --website_path=[PATH]           Full path to website to be backed up.
+  Website Path
+    -w [PATH]           Full path to website to be backed up.
 
-
-  Optional
-  --------------------------------------------------------------------------------------------------
-  --save_dir=[PATH]               Full path to directory that backups will be saved to.
+  Save Directory
+    -s [PATH]           Full path to directory that backups will be saved to.

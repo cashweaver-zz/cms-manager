@@ -3,6 +3,10 @@
 # Description: Functions to make life easier
 
 # Check if a given directory is writable by a given user.
+# Expects arguments:
+#   1. directory_path
+#   2. username
+#   3. result variable
 #
 # Returns "true" if the directory is writable, and "false" otherwise.
 function check_for_write_permissions {
@@ -37,7 +41,7 @@ function check_for_write_permissions {
 
   local _directory_values=""
   # ref: http://stackoverflow.com/a/14103893
-  if read -a directory_values < <(stat -Lc "%U %G %A" $_directory_path) && (
+  if read -a _directory_values < <(stat -Lc "%U %G %A" $_directory_path) && (
     ( [ "$_directory_values" == "$_username" ] && [ "${_directory_values[2]:2:1}" == "w" ] ) ||
     ( [ "${_directory_values[2]:8:1}" == "w" ] ) ||
     ( [ "${_directory_values[2]:5:1}" == "w" ] && (
@@ -70,6 +74,9 @@ function check_if_user_exists {
 }
 
 # Determines type of website
+# Expects arguments:
+#   1. Website path
+#   2. result variable
 #
 # Returns "WordPress", or "Drupal"
 function get_website_type {
@@ -176,4 +183,13 @@ function parse_website_path {
   eval $_ret_domain="'$_domain'"
   eval $_ret_subdomain="'$_subdomain'"
   eval $_ret_website_owner="'$_website_owner'"
+}
+
+function check_for_drush {
+  command -v drush >/dev/null 2>&1 || { echo >&2 "$(basename $0) requires
+  drush but it's either not installed or not in PATH.  Aborting."; exit 1; }
+}
+
+function check_for_wp_cli {
+  command -v wp >/dev/null 2>&1 || { echo >&2 "$(basename $0) requires wp-cli (wp) but it's either not installed or not in PATH.  Aborting."; exit 1; }
 }

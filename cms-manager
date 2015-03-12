@@ -79,6 +79,7 @@ if [[ $# -eq 0 ]]; then
   exit "${error[no_args]}"
 fi
 
+
 # Check for quiet flag/option
 if [[ "$1" = "-q" || "$1" = "--quiet" || "$1" = "-qv" ]]; then
   if [[ $# -gt 1 ]]; then
