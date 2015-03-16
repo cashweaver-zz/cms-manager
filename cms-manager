@@ -139,6 +139,14 @@ if [[ $# -ge 1 ]]; then
       shift
       new $@
       ;;
+    restore)
+      shift
+      _restore $@
+      ;;
+    status)
+      shift
+      _status $@
+      ;;
     update)
       shift
       _update $@

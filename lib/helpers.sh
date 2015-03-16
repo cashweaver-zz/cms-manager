@@ -75,6 +75,70 @@ function check_if_user_exists {
 
 # Determines type of website
 # Expects arguments:
+#   1. Compressed file containing website files
+#
+# Returns "WordPress", or "Drupal"
+function get_compressed_website_type {
+  if [[ $# -ne 3  ]]; then
+    msg "ERROR" "get_compressed_website_type takes two argument:"
+    msg "ERROR" "  compressed_file: Compressed file containing website files"
+    msg "ERROR" "  website_type: Type of website. This is a return variable."
+    msg "ERROR" "  contains_sql_file: Type of website. This is a return variable."
+    exit "${error[wrong_number_of_args]}"
+  fi
+
+  # Prefix "_" to prevent same variable name issue with the backup() function
+  local _compressed_website_files="$1"
+
+  local _ret_website_type="$2"
+  local _website_type="_"
+
+  local _ret_contains_sql_file="$3"
+  local _contains_sql_file=""
+
+  local _matched_website_type=""
+
+  _matched_website_type="_"
+  print_contents_of_compressed_file "$_compressed_website_files" | grep ".*${config[website_signature_drupal]}" >/dev/null 2>&1 && _matched_website_type="Drupal"
+  if [[ "$_website_type" = "_" ]]; then
+    if [[ "$_matched_website_type" = "Drupal" ]]; then
+      _website_type="Drupal"
+      print_contents_of_compressed_file "$_compressed_website_files" | grep "[^\/]*\/[^\/]*\.sql" >/dev/null 2>&1 && _contains_sql_file="true"
+    else
+      msg "ERROR" "Cannot determine website type for $_compressed_website_files"
+      exit
+    fi
+  fi
+
+  _matched_website_type="_"
+  print_contents_of_compressed_file "$_compressed_website_files" | grep ".*${config[website_signature_wordpress]}" >/dev/null 2>&1 && _matched_website_type="WordPress"
+  if [[ "$_website_type" = "_" ]]; then
+    if [[ "$_matched_website_type" = "WordPress" ]]; then
+      _website_type="WordPress"
+    else
+      msg "ERROR" "Cannot determine website type for $_compressed_website_files"
+      exit
+    fi
+  fi
+
+  eval $_ret_website_type="'$_website_type'"
+  eval $_ret_contains_sql_file="'$_contains_sql_file'"
+}
+
+function print_contents_of_compressed_file {
+  case "$files_file" in
+    *.tar.bz2) tar tvjf "$files_file" ;;
+    *.tar.gz) tar tvzf "$files_file" ;;
+    *.tar.xz) tar tvJf "$files_file" ;;
+    *.tar) tar tvf "$files_file" ;;
+    *.tbz2) tar tvjf "$files_file" ;;
+    *.tgz) tar tvzf "$files_file" ;;
+    *.zip) unzip -l "$files_file" ;;
+  esac
+}
+
+# Determines type of website
+# Expects arguments:
 #   1. Website path
 #   2. result variable
 #
@@ -212,4 +276,87 @@ function count_from {
     sleep 1
   done
   echo -en "\r"
+}
+
+# ref: http://www.shellhacks.com/en/HowTo-Extract-Archives-targzbz2rarzip7ztbz2tgzZ
+function extract {
+  if [[ $# -ne 1 || -z "$1" ]]; then
+    msg "ERROR" "extract expects one argument"
+    exit "${error[wrong_number_of_args]}"
+  else
+    if [[ -f $1 ]]; then
+      # NAME=${1%.*}
+      # mkdir $NAME && cd $NAME
+      case $1 in
+      *.tar.bz2) tar xvjf $1 ;;
+      *.tar.gz) tar xvzf $1 ;;
+      *.tar.xz) tar xvJf $1 ;;
+      *.lzma) unlzma $1 ;;
+      *.bz2) bunzip2 $1 ;;
+      *.rar) unrar x -ad $1 ;;
+      *.gz) gunzip $1 ;;
+      *.tar) tar xvf $1 ;;
+      *.tbz2) tar xvjf $1 ;;
+      *.tgz) tar xvzf $1 ;;
+      *.zip) unzip $1 ;;
+      *.Z) uncompress $1 ;;
+      *.7z) 7z x $1 ;;
+      *.xz) unxz $1 ;;
+      *.exe) cabextract $1 ;;
+      *)
+        msg "ERROR" "extract: '$1' - unknown archive method"
+        exit "${error[bad_arg]}"
+        ;;
+      esac
+    else
+      msg "ERROR" "$1 - file does not exist"
+      exit "${error[bad_arg]}"
+    fi
+  fi
+}
+
+function get_db_credentials {
+  if [[ $# -ne 5  ]]; then
+    msg "ERROR" "get_db_credentials takes four arguments:"
+    msg "ERROR" "   website_path: path to website root"
+    msg "ERROR" "   cms_type: type of CMS"
+    msg "ERROR" "   db_name: Database name (return variable)"
+    msg "ERROR" "   db_user_name: Database user name (return variable)"
+    msg "ERROR" "   db_user_pass: Database user password (return variable)"
+    exit "${error[wrong_number_of_args]}"
+  fi
+
+  local _website_path="$1"
+  local _cms_type="$2"
+  local _ret_db_name="$3"
+  local _ret_db_user_name="$4"
+  local _ret_db_user_pass="$5"
+
+  # Set up database variables
+  local _db_name=""
+  local _db_user_name=""
+  local _db_user_pass=""
+
+  cd "$_website_path"
+  case "$_cms_type" in
+    Drupal)
+      _db_name=$(grep "^[^\$\*]*database" sites/default/settings.php | sed "s/.*'[^'']*'.*'\([^'']*\)',/\1/")
+      _db_user_name=$(grep "^[^\$\*]*username" sites/default/settings.php | sed "s/.*'[^'']*'.*'\([^'']*\)',/\1/")
+      _db_user_pass=$(grep "^[^\$\*]*password" sites/default/settings.php | sed "s/.*'[^'']*'.*'\([^'']*\)',/\1/")
+      ;;
+    WordPress)
+      _db_name=$(grep "DB_NAME" wp-config.php | sed "s/define('DB_NAME', '\([^'']*\)');/\1/")
+      _db_user_name=$(grep "DB_USER" wp-config.php | sed "s/define('DB_USER', '\([^'']*\)');/\1/")
+      _db_user_pass=$(grep "DB_PASSWORD" wp-config.php | sed "s/define('DB_PASSWORD', '\([^'']*\)');/\1/")
+      ;;
+  esac
+
+  if [[ -z "$_db_name" || -z "$_db_user_name" || -z "$db_user_pass" ]]; then
+    msg "ERROR" "Unable to detect database credentials."
+    exit "${error[command_failed]}"
+  fi
+
+  eval $_ret_db_name="'$_db_name'"
+  eval $_ret_db_user_name="'$_db_user_name'"
+  eval $_ret_db_user_pass="'$_db_user_pass'"
 }

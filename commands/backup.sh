@@ -20,14 +20,9 @@ function _backup {
   local save_dir=""
   while getopts "$options" o; do
     case "${o}" in
-      w)
-        website_path="${OPTARG}"
-        ;;
-      s)
-        save_dir="${OPTARG%/}"
-        ;;
+      w) website_path="${OPTARG}" ;;
+      s) save_dir="${OPTARG%/}" ;;
       *)
-        echo "${o}"
         usage backup
         exit "${error[bad_arg]}"
         ;;
@@ -68,7 +63,7 @@ function _backup {
   local write_permissions=""
   check_for_write_permissions "$save_dir" "$(whoami)" write_permissions
   if [[ "$write_permissions" = "false" ]]; then
-    msg "ERROR" "Save directory ($save_dir) is not a writable by $(whoami)"
+    msg "ERROR" "Save directory ($save_dir) is not writable by $(whoami)"
     exit "${error[bad_arg]}"
   fi
 
@@ -113,7 +108,7 @@ function _backup_drupal {
   local save_dir="$1"
   local website_path="$2"
 
-  local backup_destination="$save_dir/$(date "+%Y-%m-%d-%H-%M-%S").tar.gz"
+  local backup_destination="$save_dir/$(date "+%Y%m%d-%H%M%S").tar.gz"
 
   cd $website_path
   drush cc all >/dev/null 2>&1
@@ -141,8 +136,8 @@ function _backup_wordpress {
   local save_dir="$1"
   local website_path="$2"
 
-  local file_backup_destination="$save_dir/$(date "+%Y-%m-%d-%H-%M-%S").tar.gz"
-  local sql_backup_destination="$save_dir/$(date "+%Y-%m-%d-%H-%M-%S").sql"
+  local file_backup_destination="$save_dir/$(date "+%Y%m%d-%H%M%S").tar.gz"
+  local sql_backup_destination="$save_dir/$(date "+%Y%m%d-%H%M%S").sql"
 
   cd "$website_path"
   wp db export $sql_backup_destination >/dev/null 2>&1

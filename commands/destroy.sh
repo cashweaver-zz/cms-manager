@@ -70,8 +70,8 @@ function _destroy {
       ;;
     WordPress)
       cd "$website_path"
-      database_name=$(grep "DB_NAME" wp-config.php | sed "s/define('DB_NAME', '\([^'']*\)');/\1/")
-      database_name=$(grep "DB_USER" wp-config.php | sed "s/define('DB_USER', '\([^'']*\)');/\1/")
+      db_name=$(grep "DB_NAME" wp-config.php | sed "s/define('DB_NAME', '\([^'']*\)');/\1/")
+      db_user_name=$(grep "DB_USER" wp-config.php | sed "s/define('DB_USER', '\([^'']*\)');/\1/")
       ;;
   esac
 
