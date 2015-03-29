@@ -2,7 +2,10 @@
 # Author: cbweaver (https://github.com/cbweaver)
 # Description: Restore a backup of files and database
 
-function _restore {
+# Purpose: Restore a website from backup
+# Arguments:
+#   None
+function restore {
   # 1. Gather and validate command line arguments
   # 2. Determine if restore will overwrite anything
   # 3. Determine which CMS is held within $files_file
@@ -182,9 +185,9 @@ function _restore {
   fi
 }
 
-# restore_path must be
-#   a. a valid directory
-#   b. writable by the executing user
+# Purpose: Ensure restore path is valid
+# Arguments:
+#   1. restore_path
 function _validate_restore_path {
   if [[ $# -ne 1  ]]; then
     msg "ERROR" "_validate_restore_path takes one argument: \$restore_path"
@@ -206,9 +209,9 @@ function _validate_restore_path {
   fi
 }
 
-# files_file must be
-#   a. a valid file
-#   b. compressed as a tar or zip file
+# Purpose: Ensure files file is valid
+# Arguments:
+#   1. files_file
 function _validate_files_file {
   if [[ $# -ne 1  ]]; then
     msg "ERROR" "_validate_files_file takes one argument: \$files_file"
@@ -237,8 +240,9 @@ function _validate_files_file {
   esac
 }
 
-# database_file, if set, must be
-#   a. a valid file
+# Purpose: Ensure database file is valid
+# Arguments:
+#   1. database_file
 function _validate_database_file {
   if [[ $# -ne 1  ]]; then
     msg "ERROR" "_validate_database_file takes one argument: \$database_file"

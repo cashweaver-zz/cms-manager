@@ -2,6 +2,9 @@
 # Author: cbweaver (https://github.com/cbweaver)
 # Description: Print usage information
 
+# Purpose: Print usage information for all commands
+# Arguments:
+#   None
 function all_usages {
   echo "$(basename $0) [options] [commands]" >&2
   echo "Options" >&2
@@ -22,6 +25,9 @@ function all_usages {
   done
 }
 
+# Purpose: Print usage information for a specific command
+# Arguments:
+#   1. (optional) command
 function usage {
   echo "" >&2
   if [[ $# -ne 1 ]]; then

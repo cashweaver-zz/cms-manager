@@ -1,10 +1,10 @@
-new UNDER DEVELOPMENT
-  Create a new website.
+new -w|d PATH
+  Create a new instance of a CMS
 
   Required
   --------------------------------------------------------------------------------------------------
-  --prebuild, -p                  Build a new Drupal website based on the prebuild.
+  WordPress
+    -w [PATH]           Full path to website to be backed up.
 
-  OR
-
-  --fresh, -f                     Create a brand new Drupal website.
+  Drupal
+    -d [PATH]           Full path to directory that backups will be saved to.

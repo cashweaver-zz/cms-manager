@@ -16,6 +16,23 @@ if [[ "$bash_version" -lt 4 ]]; then
 fi
 
 
+# Dependancy check
+# Dependent on: drush, wp (wp-cli), apg
+command -v drush >/dev/null 2>&1 || {
+  echo >&2 "$(basename $0) requires drush but it's either not installed or not in PATH.  Aborting."
+  exit 1
+}
+
+command which wp >/dev/null 2>&1 || {
+  echo >&2 "$(basename $0) requires wp-cli (wp) but it's either not installed or not in PATH.  Aborting."
+  exit 1
+}
+
+command -v apg >/dev/null 2>&1 || {
+  echo >&2 "$(basename $0) requires apg but it's either not installed or not in PATH.  Aborting."
+  exit 1
+}
+
 #=============================================================================
 #===  Build global variables
 #=============================================================================
@@ -121,11 +138,11 @@ if [[ $# -ge 1 ]]; then
   case "$1" in
     backup)
       shift
-      _backup $@
+      backup $@
       ;;
     destroy)
       shift
-      _destroy $@
+      destroy $@
       ;;
     help)
       shift
@@ -141,24 +158,25 @@ if [[ $# -ge 1 ]]; then
       ;;
     restore)
       shift
-      _restore $@
+      restore $@
       ;;
     status)
       shift
-      _status $@
+      check_status $@
       ;;
     update)
       shift
-      _update $@
+      update $@
       ;;
     *)
       usage
       exit $errorcode_invalid_args
+      exit "${error[unrecognized_arg]}"
       ;;
   esac
-else 
+else
   usage
-  exit $errorcode_invalid_args
+  exit "${error[wrong_number_of_args]}"
 fi
 
 # Everything went well.

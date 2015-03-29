@@ -2,7 +2,10 @@
 # Author: cbweaver (https://github.com/cbweaver)
 # Description: Create a backup of files and the database
 
-function _backup {
+# Purpose: Backup a given website
+# Arguments:
+#   None
+function backup {
   # 1. Collect and test arguments
   # 2. Attempt to create backup
   # 3. Handle errors, and print success/error messages
@@ -10,9 +13,6 @@ function _backup {
   #=============================================================================
   #===  1. Collect and test arguments
   #=============================================================================
-
-  check_for_drush
-  check_for_wp_cli
 
   local options=":w:s:"
 
@@ -97,6 +97,10 @@ function _backup {
 
 
 # TODO
+# Purpose: Backup a given Drupal website
+# Arguments:
+#   1. save_dir
+#   2. website_path
 function _backup_drupal {
   if [[ $# -ne 2  ]]; then
     msg "ERROR" "_backup_drupal takes two arguments:"
@@ -125,6 +129,10 @@ function _backup_drupal {
 }
 
 # TODO
+# Purpose: Backup a given WordPress website
+# Arguments:
+#   1. save_dir
+#   2. website_path
 function _backup_wordpress {
   if [[ $# -ne 2  ]]; then
     msg "ERROR" "_backup_wordpress takes two arguments:"
@@ -163,17 +171,4 @@ function _backup_wordpress {
     msg "SUCCESS" "    Files:    $file_backup_destination"
     msg "SUCCESS" "    Database: $sql_backup_destination"
   fi
-}
-
-
-# Description:
-# Create backup directory at specified path using specified owner
-# In:
-#   1: backup root path eg: /home/mitc/drupal-backups
-#   2: site name eg: d7
-function _create_backup_dir {
-  local backup_root_path=$1
-
-  mkdir -p $backup_root_path
-  msg "COMMENT" "Created dir $backup_root_path"
 }

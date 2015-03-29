@@ -2,13 +2,13 @@
 # Author: cbweaver (https://github.com/cbweaver)
 # Description: Functions to make life easier
 
-# Check if a given directory is writable by a given user.
-# Expects arguments:
+# Purpose: Check if a given directory is writable by a given user.
+# Arguments:
 #   1. directory_path
 #   2. username
-#   3. result variable
-#
-# Returns "true" if the directory is writable, and "false" otherwise.
+#   3. result (return variable)
+#       "true": The directory is writable
+#       "false": Otherwise
 function check_for_write_permissions {
   if [[ $# -ne 3  ]]; then
     msg "ERROR" "check_for_write_permissions takes three arguments:"
@@ -55,9 +55,12 @@ function check_for_write_permissions {
   eval $_ret_result="'$_result'"
 }
 
-# Check if a given user exists.
-#
-# Returns "true" if the user exists, and "false" otherwise.
+# Purpose: Check if a given user exists
+# Arguments:
+#   1. username
+#   2. result (return variable)
+#       "true": The user exists
+#       "false": Otherwise
 function check_if_user_exists {
   if [[ $# -ne 2  ]]; then
     msg "ERROR" "check_if_user_exists takes one argument:"
@@ -73,11 +76,15 @@ function check_if_user_exists {
   eval $__result="'$_result'"
 }
 
-# Determines type of website
-# Expects arguments:
-#   1. Compressed file containing website files
-#
-# Returns "WordPress", or "Drupal"
+# Purpose: Determine CMS of compressed website
+# Arguments:
+#   1. compressed_file
+#   2. website_type (return variable)
+#       "WordPress": The compressed file contains a WordPress website
+#       "Drupal": The compressed file contains a Drupal website
+#   3. contains_sql_file (return variable)
+#       "true": The compressed_file contains an sql file in the top-level
+#       "false": Otherwise
 function get_compressed_website_type {
   if [[ $# -ne 3  ]]; then
     msg "ERROR" "get_compressed_website_type takes two argument:"
@@ -125,24 +132,33 @@ function get_compressed_website_type {
   eval $_ret_contains_sql_file="'$_contains_sql_file'"
 }
 
+# Purpose: Print the contents of a compressed file without expanding it
+# Arguments:
+#   1. compressed_file
 function print_contents_of_compressed_file {
-  case "$files_file" in
-    *.tar.bz2) tar tvjf "$files_file" ;;
-    *.tar.gz) tar tvzf "$files_file" ;;
-    *.tar.xz) tar tvJf "$files_file" ;;
-    *.tar) tar tvf "$files_file" ;;
-    *.tbz2) tar tvjf "$files_file" ;;
-    *.tgz) tar tvzf "$files_file" ;;
-    *.zip) unzip -l "$files_file" ;;
+  if [[ $# -ne 1  ]]; then
+    msg "ERROR" "print_contents_of_compressed_file takes one argument:"
+    msg "ERROR" "  compressed_file: Compressed file containing website files"
+    exit "${error[wrong_number_of_args]}"
+  fi
+
+  case "$1" in
+    *.tar.bz2) tar tvjf "$1" ;;
+    *.tar.gz) tar tvzf "$1" ;;
+    *.tar.xz) tar tvJf "$1" ;;
+    *.tar) tar tvf "$1" ;;
+    *.tbz2) tar tvjf "$1" ;;
+    *.tgz) tar tvzf "$1" ;;
+    *.zip) unzip -l "$1" ;;
   esac
 }
 
-# Determines type of website
-# Expects arguments:
-#   1. Website path
-#   2. result variable
-#
-# Returns "WordPress", or "Drupal"
+# Purpose: Determines CMS type of given website
+# Arguments:
+#   1. website_path
+#   2. website_type (return_variable)
+#       "WordPress": The compressed file contains a WordPress website
+#       "Drupal": The compressed file contains a Drupal website
 function get_website_type {
   if [[ $# -ne 2  ]]; then
     msg "ERROR" "get_website_type takes two argument:"
@@ -198,12 +214,15 @@ function get_website_type {
   eval $_ret_website_type="'$_website_type'"
 }
 
-# Parses given website path
-#
-# Returns the expected domain, subdomain, and website_owner of the given path
+# Purpose: Extract various components from website path
+# Arguments:
+#   1. website_path
+#   2. domain (return variable)
+#   3. subdomain (return variable)
+#   4. website_owner (return variable)
 function parse_website_path {
   if [[ $# -ne 4  ]]; then
-    msg "ERROR" "get_website_type takes two argument:"
+    msg "ERROR" "get_website_type takes four arguments:"
     msg "ERROR" "  website_path : Path to the website to be parsed"
     msg "ERROR" "  domain       : Return variable."
     msg "ERROR" "  subdomain    : Return variable."
@@ -249,15 +268,9 @@ function parse_website_path {
   eval $_ret_website_owner="'$_website_owner'"
 }
 
-function check_for_drush {
-  command -v drush >/dev/null 2>&1 || { echo >&2 "$(basename $0) requires
-  drush but it's either not installed or not in PATH.  Aborting."; exit 1; }
-}
-
-function check_for_wp_cli {
-  command -v wp >/dev/null 2>&1 || { echo >&2 "$(basename $0) requires wp-cli (wp) but it's either not installed or not in PATH.  Aborting."; exit 1; }
-}
-
+# Purpose: Count down from a given number
+# Arguments:
+#   1. number
 function count_from {
   if [[ $# -ne 1  ]]; then
     msg "ERROR" "count_from takes one argument:"
@@ -278,6 +291,9 @@ function count_from {
   echo -en "\r"
 }
 
+# Purpose: Extract a compressed file
+# Arguments:
+#   1. compressed_file
 # ref: http://www.shellhacks.com/en/HowTo-Extract-Archives-targzbz2rarzip7ztbz2tgzZ
 function extract {
   if [[ $# -ne 1 || -z "$1" ]]; then
@@ -315,6 +331,13 @@ function extract {
   fi
 }
 
+# Purpose: Extract database credentials from a given website_path
+# Arguments:
+#   1. website_path
+#   2. cms_type
+#   3. db_name (return variable)
+#   4. db_user_name (return variable)
+#   5. db_user_pass (return variable)
 function get_db_credentials {
   if [[ $# -ne 5  ]]; then
     msg "ERROR" "get_db_credentials takes four arguments:"

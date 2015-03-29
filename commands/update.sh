@@ -2,7 +2,10 @@
 # Author: cbweaver (https://github.com/cbweaver)
 # Description: Apply all pending updates
 
-function _update {
+# Purpose: Update a given webite
+# Arguments:
+#   None
+function update {
   # 1. Collect and test arguments
   # 2. Update
 
@@ -70,11 +73,12 @@ function _update {
 }
 
 
-# Description:
-# Does function name
+# Purpose: Update a Drupal website to latest core and module releases
+# Arguments:
+#   1. website_path
 function _update_drupal {
   if [[ $# -ne 1  ]]; then
-    msg "ERROR" "_update_drupal takes one arguments:"
+    msg "ERROR" "_update_drupal takes one argument:"
     msg "ERROR" "  website_path: The full path to the Drupal website to be updated"
     exit "${error[wrong_number_of_args]}"
   fi
@@ -93,10 +97,12 @@ function _update_drupal {
   drush up --no-backup -y
 }
 
-# Does function name
+# Purpose: Update a WordPress website to latest core and plugin releases
+# Arguments:
+#   1. website_path
 function _update_wordpress {
   if [[ $# -ne 1  ]]; then
-    msg "ERROR" "_update_wordpress takes one arguments:"
+    msg "ERROR" "_update_wordpress takes one argument:"
     msg "ERROR" "  website_path: The full path to the WordPress website to be updated"
     exit "${error[wrong_number_of_args]}"
   fi

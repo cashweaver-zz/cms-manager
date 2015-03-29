@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 # Author: cbweaver (https://github.com/cbweaver)
-# Description: TODO
+# Description: Print the status of CMS core and plugins
 
-function _status {
+# Purpose: Print the status of a given CMS core and its plugins
+# Arguments:
+#   None
+function check_status {
   # 1. Collect and test arguments
   # 2. Check status of plugins and core
 
@@ -70,9 +73,12 @@ function _status {
   esac
 }
 
+# Purpose: Print the status of Drupal core and modules
+# Arguments:
+#   1. website_path
 function _status_drupal {
   if [[ $# -ne 1  ]]; then
-    msg "ERROR" "_status_drupal takes two arguments:"
+    msg "ERROR" "_status_drupal takes one argument:"
     msg "ERROR" "  website_path: The full path to the directory to be backed up"
     exit "${error[wrong_number_of_args]}"
   fi
@@ -83,9 +89,12 @@ function _status_drupal {
   drush pm-updatestatus
 }
 
+# Purpose: Print the status of WordPress core and plugins
+# Arguments:
+#   1. website_path
 function _status_wordpress {
   if [[ $# -ne 1  ]]; then
-    msg "ERROR" "_status_wordpress takes two arguments:"
+    msg "ERROR" "_status_wordpress takes one argument:"
     msg "ERROR" "  website_path: The full path to the directory to be backed up"
     exit "${error[wrong_number_of_args]}"
   fi

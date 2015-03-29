@@ -23,6 +23,10 @@ yellow="\033[1;33m"
 light_gray="\033[0;37m"
 white="\033[1;37m"
 
+# Purpose: Format and print a given message
+# Arguments:
+#   1. message_type
+#   2. message
 function msg {
 if [[ $quiet = "false" ]]; then
   if [[ $# -eq 2 ]]; then

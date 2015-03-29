@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 # Author: cbweaver (https://github.com/cbweaver)
-# Description: TODO
+# Description: Destroy a given website by deleting all files and the database.
 
 # TODO
-function _destroy {
+# Purpose: Destroy a given website
+# Arguments:
+#   None
+function destroy {
   # 1. Collect and test arguments
   # 2. Update
 
@@ -95,13 +98,13 @@ function _destroy {
   count_from 9
   #read -t 1 -n 10000 discard
   read -p "Click [enter] to drop database and database user"
-  exit
+  echo ""
 
   # Drop database and database user
   msg "PROMPT" "MySQL: Please enter root password Mysql"
   echo ""
   mysql_command="drop database $db_name; drop user $db_user_name; drop user $db_user_name@localhost;"
-  mysqlcmd_out=$(mysql -uroot -p -e "$CMD" 2>&1)
+  mysqlcmd_out=$(mysql -uroot -p -e "$mysql_command" 2>&1)
   mysqlcmd_rc=$?
   if [[ $mysqlcmd_rc -eq 0 ]]; then
     msg "SUCCESS" "MySQL: Successfully dropped db and db user"
