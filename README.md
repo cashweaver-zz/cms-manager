@@ -1,9 +1,9 @@
 # CMS Manager
-Version: 1.0
+Version: 1.1
 
 A CMS-agnostic aproach to managing your hosted websites.
 
-**Drupal**, and **WordPress** are currently supported.
+**Drupal** and **WordPress** (running on **MySQL**) are currently supported.
 
 ----------
 
@@ -19,15 +19,15 @@ A CMS-agnostic aproach to managing your hosted websites.
 
 **status**: Check a given website for available updates.
 
+**restore**: Restore a website.
+
 **update**: Update a given website.
 
 ### Under Development
 
-list (1.1.0): Display list of all hosted websites.
+list (1.1): Display list of all hosted websites.
 
-restore (1.1.0): Restore a website.
-
-test (1.X.X): Run tests on a given website. Options define which test(s) are run.
+test (1.X): Run tests on a given website. Options define which test(s) are run.
 
 ----------
 

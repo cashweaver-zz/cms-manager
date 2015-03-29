@@ -103,26 +103,43 @@ function get_compressed_website_type {
   local _ret_contains_sql_file="$3"
   local _contains_sql_file=""
 
-  local _matched_website_type=""
+  local _matched_website_type="_"
+  local _website_signature=""
 
-  _matched_website_type="_"
-  print_contents_of_compressed_file "$_compressed_website_files" | grep ".*${config[website_signature_drupal]}" >/dev/null 2>&1 && _matched_website_type="Drupal"
-  if [[ "$_website_type" = "_" ]]; then
-    if [[ "$_matched_website_type" = "Drupal" ]]; then
-      _website_type="Drupal"
-      print_contents_of_compressed_file "$_compressed_website_files" | grep "[^\/]*\/[^\/]*\.sql" >/dev/null 2>&1 && _contains_sql_file="true"
-    else
-      msg "ERROR" "Cannot determine website type for $_compressed_website_files"
-      exit
-    fi
+  # Check for Drupal
+  # ================
+
+  # Remove the leading relative file position if present. The relative
+  # position is used in other tests, but will cause this one to break.
+  _website_signature="${config[website_signature_drupal]}"
+  if [[ "${config[website_signature_drupal]:0:2}" = "./" ]]; then
+    _website_signature="${_website_signature:2}"
   fi
 
-  _matched_website_type="_"
-  print_contents_of_compressed_file "$_compressed_website_files" | grep ".*${config[website_signature_wordpress]}" >/dev/null 2>&1 && _matched_website_type="WordPress"
+  print_contents_of_compressed_file "$_compressed_website_files" | grep ".*$_website_signature" >/dev/null 2>&1 && _matched_website_type="Drupal"
+  if [[ "$_matched_website_type" = "Drupal" ]]; then
+    _website_type="Drupal"
+    print_contents_of_compressed_file "$_compressed_website_files" | grep "[^\/]*\/[^\/]*\.sql" >/dev/null 2>&1 && _contains_sql_file="true"
+  fi
+
+  # Check for WordPress
+  # ===================
+
+  # Remove the leading relative file position if present. The relative
+  # position is used in other tests, but will cause this one to break.
+  _website_signature="${config[website_signature_wordpress]}"
+  if [[ "${config[website_signature_wordpress]:0:2}" = "./" ]]; then
+    _website_signature="${_website_signature:2}"
+  fi
+
+  print_contents_of_compressed_file "$_compressed_website_files" | grep ".*$_website_signature" >/dev/null 2>&1 && _matched_website_type="WordPress"
   if [[ "$_website_type" = "_" ]]; then
     if [[ "$_matched_website_type" = "WordPress" ]]; then
       _website_type="WordPress"
-    else
+    fi
+  else
+    # Print error if more than one website_signature returned true
+    if [[ "$_matched_website_type" = "WordPress" ]]; then
       msg "ERROR" "Cannot determine website type for $_compressed_website_files"
       exit
     fi

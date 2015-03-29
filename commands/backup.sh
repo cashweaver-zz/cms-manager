@@ -85,9 +85,6 @@ function backup {
   #=============================================================================
 
   msg "COMMENT" "$website_type website detected. Creating backup..."
-  echo "Save dir: $save_dir"
-  echo "Website_path: $website_path"
-  exit
   case "$website_type" in
     Drupal)
       _backup_drupal "$save_dir" "$website_path"

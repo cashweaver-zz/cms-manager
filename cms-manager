@@ -17,7 +17,7 @@ fi
 
 
 # Dependancy check
-# Dependent on: drush, wp (wp-cli), apg
+# Dependent on: drush, wp (wp-cli), apg, mysqldump, mysqlshow, mysql
 command -v drush >/dev/null 2>&1 || {
   echo >&2 "$(basename $0) requires drush but it's either not installed or not in PATH.  Aborting."
   exit 1
@@ -29,6 +29,21 @@ command which wp >/dev/null 2>&1 || {
 }
 
 command -v apg >/dev/null 2>&1 || {
+  echo >&2 "$(basename $0) requires apg but it's either not installed or not in PATH.  Aborting."
+  exit 1
+}
+
+command -v mysql >/dev/null 2>&1 || {
+  echo >&2 "$(basename $0) requires apg but it's either not installed or not in PATH.  Aborting."
+  exit 1
+}
+
+command -v mysqldump >/dev/null 2>&1 || {
+  echo >&2 "$(basename $0) requires apg but it's either not installed or not in PATH.  Aborting."
+  exit 1
+}
+
+command -v mysqlshow >/dev/null 2>&1 || {
   echo >&2 "$(basename $0) requires apg but it's either not installed or not in PATH.  Aborting."
   exit 1
 }
@@ -160,6 +175,10 @@ if [[ $# -ge 1 ]]; then
       shift
       new $@
       ;;
+    restore)
+      shift
+      restore $@
+      ;;
     status)
       shift
       check_status $@
@@ -170,7 +189,6 @@ if [[ $# -ge 1 ]]; then
       ;;
     *)
       usage
-      exit $errorcode_invalid_args
       exit "${error[unrecognized_arg]}"
       ;;
   esac
