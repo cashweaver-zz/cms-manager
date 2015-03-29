@@ -81,14 +81,6 @@ function _update_drupal {
   fi
 
   local website_path="$1"
-  if [[ ! -d "$website_path"  ]]; then
-    msg "ERROR" "_update_drupal:"
-    msg "ERROR" "  website_path: $website_path"
-    msg "ERROR" "  is not a valid directory path"
-    exit "${error[bad_arg]}"
-  fi
-
-  local website_path="$1"
   cd "$website_path"
 
   drush up --no-backup -y
@@ -105,13 +97,7 @@ function _update_wordpress {
   fi
 
   local website_path="$1"
-  if [[ ! -d "$website_path"  ]]; then
-    msg "ERROR" "_update_wordpress:"
-    msg "ERROR" "  website_path: $website_path"
-    msg "ERROR" "  is not a valid directory path"
-    exit "${error[bad_arg]}"
-  fi
-
   cd "$website_path"
+
   wp core update && wp core update-db
 }

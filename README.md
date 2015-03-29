@@ -1,5 +1,5 @@
 # CMS Manager
-Version: alpha.0.0
+Version: 1.0.0
 
 A CMS-agnostic aproach to managing your hosted websites.
 

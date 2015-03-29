@@ -160,10 +160,6 @@ if [[ $# -ge 1 ]]; then
       shift
       new $@
       ;;
-    restore)
-      shift
-      restore $@
-      ;;
     status)
       shift
       check_status $@

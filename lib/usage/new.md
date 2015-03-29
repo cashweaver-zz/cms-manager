@@ -1,5 +1,5 @@
 new -w|d PATH
-  Create a new instance of a CMS
+  Create a new instance of a CMS.
 
   Required
   --------------------------------------------------------------------------------------------------

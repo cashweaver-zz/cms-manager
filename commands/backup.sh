@@ -85,6 +85,9 @@ function backup {
   #=============================================================================
 
   msg "COMMENT" "$website_type website detected. Creating backup..."
+  echo "Save dir: $save_dir"
+  echo "Website_path: $website_path"
+  exit
   case "$website_type" in
     Drupal)
       _backup_drupal "$save_dir" "$website_path"
@@ -95,8 +98,6 @@ function backup {
   esac
 }
 
-
-# TODO
 # Purpose: Backup a given Drupal website
 # Arguments:
 #   1. save_dir
@@ -128,7 +129,6 @@ function _backup_drupal {
   fi
 }
 
-# TODO
 # Purpose: Backup a given WordPress website
 # Arguments:
 #   1. save_dir
@@ -154,21 +154,21 @@ function _backup_wordpress {
   if [[ ! -f $file_backup_destination  ||  ! -f $sql_backup_destination ]]; then
     msg "ERROR" "Error saving backup archives:"
     if [[ ! -f $file_backup_destination ]]; then 
-      msg "ERROR" "    Files:    $file_backup_destination"
+      msg "ERROR" "  Files:    $file_backup_destination"
     else 
-      msg "SUCCESS" "    Files:    $file_backup_destination"
+      msg "SUCCESS" "  Files:    $file_backup_destination"
     fi
 
     if [[ ! -f $sql_backup_destination ]]; then 
-      msg "ERROR" "    Database: $sql_backup_destination"
+      msg "ERROR" "  Database: $sql_backup_destination"
     else
-      msg "SUCCESS" "    Database: $sql_backup_destination"
+      msg "SUCCESS" "  Database: $sql_backup_destination"
     fi
 
     exit "${error[command_failed]}"
   else 
     msg "SUCCESS" "Backup archives saved as:"
-    msg "SUCCESS" "    Files:    $file_backup_destination"
-    msg "SUCCESS" "    Database: $sql_backup_destination"
+    msg "SUCCESS" "  Files:    $file_backup_destination"
+    msg "SUCCESS" "  Database: $sql_backup_destination"
   fi
 }
