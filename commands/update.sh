@@ -13,9 +13,6 @@ function update {
   #===  1. Collect and test arguments
   #=============================================================================
 
-  check_for_drush
-  check_for_wp_cli
-
   local options=":w:"
 
   local website_path=""
@@ -52,7 +49,7 @@ function update {
     exit "${error[bad_arg]}"
   fi
 
-  # 3b. website_path must be a valid CMS root
+  # 2b. website_path must be a valid CMS root
   local website_type=""
   get_website_type "$website_path" website_type
   # Errors are handled within get_website_type.

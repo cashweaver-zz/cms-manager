@@ -13,9 +13,6 @@ function check_status {
   #===  1. Collect and test arguments
   #=============================================================================
 
-  check_for_drush
-  check_for_wp_cli
-
   local options=":w:"
 
   local website_path=""

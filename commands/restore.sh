@@ -2,6 +2,8 @@
 # Author: cbweaver (https://github.com/cbweaver)
 # Description: Restore a backup of files and database
 
+# TODO: Target release v1.1
+# TODO: Needs a complete re-thinking.
 # Purpose: Restore a website from backup
 # Arguments:
 #   None
@@ -150,21 +152,20 @@ function restore {
     case "$files_website_type" in
       Drupal)
         if [[ -z "$contains_sql_file" ]]; then
-          msg "COMMENT" "Restoring database..."
           get_db_credentials "$restore_path" "$files_website_type" db_name db_user_name db_user_pass
         fi
         ;;
       WordPress)
-        msg "COMMENT" "Restoring database..."
-          get_db_credentials "$restore_path" "$files_website_type" db_name db_user_name db_user_pass
+        get_db_credentials "$restore_path" "$files_website_type" db_name db_user_name db_user_pass
         ;;
     esac
 
     # Create database and user if they don't exist.
+    msg "COMMENT" "Restoring database..."
     msg "PROMPT" "MySQL: Please enter root password MySQL"
     echo ""
     local mysql_create_db="CREATE DATABASE IF NOT EXISTS $db_name;"
-    local mysql_create_user="GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES, LOCK TABLES on $db_name* to $db_user_name@localhost identified by '$db_user_pass'; flush privileges;"
+    local mysql_create_user="GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES, LOCK TABLES on $db_name.* to $db_user_name@localhost identified by '$db_user_pass'; flush privileges;"
     local mysqlcmd_out=$(mysql -uroot -p -e "$mysql_create_db$mysql_create_user" 2>&1)
     local mysqlcmd_rc=$?
     if [[ $mysqlcmd_rc -eq 0 ]]; then
