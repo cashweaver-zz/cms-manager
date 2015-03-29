@@ -300,6 +300,9 @@ function _new_wordpress {
     read wordpress_admin_email
   done
 
+  echo ""
+  echo ""
+
   # Print the values back to user for double-checking
   msg "COMMENT" "Double check these entries:"
   msg "COMMENT" "  Website title           :  $website_title"

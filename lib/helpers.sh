@@ -374,7 +374,7 @@ function get_db_credentials {
       ;;
   esac
 
-  if [[ -z "$_db_name" || -z "$_db_user_name" || -z "$db_user_pass" ]]; then
+  if [[ -z "$_db_name" || -z "$_db_user_name" || -z "$_db_user_pass" ]]; then
     msg "ERROR" "Unable to detect database credentials."
     exit "${error[command_failed]}"
   fi
@@ -382,4 +382,64 @@ function get_db_credentials {
   eval $_ret_db_name="'$_db_name'"
   eval $_ret_db_user_name="'$_db_user_name'"
   eval $_ret_db_user_pass="'$_db_user_pass'"
+}
+
+function update_db_credentials {
+  if [[ $# -ne 5  ]]; then
+    msg "ERROR" "get_db_credentials takes four arguments:"
+    msg "ERROR" "   website_path: path to website root"
+    msg "ERROR" "   cms_type: type of CMS"
+    msg "ERROR" "   new_db_name: New database name"
+    msg "ERROR" "   new_db_user_name: New database user name"
+    msg "ERROR" "   new_db_user_pass: New database user password"
+    exit "${error[wrong_number_of_args]}"
+  fi
+
+  local _website_path="$1"
+  local _cms_type="$2"
+  local _new_db_name="$3"
+  local _new_db_user_name="$4"
+  local _new_db_user_pass="$5"
+
+  local _old_db_name=""
+  local _old_db_user_name=""
+  local _old_db_user_pass=""
+
+  get_db_credentials "$_website_path" "$_cms_type" _old_db_name _old_db_user_name _old_db_user_pass
+
+  cd "$_website_path"
+  local has_write_permissions=""
+  local granted_write_permissions="false"
+  case "$_cms_type" in
+    Drupal)
+      # Permissions may be configured (for security reqsons) to disallow
+      # writing in sites/default. Enable writing temporarily if it is
+      # required.
+      check_for_write_permissions "$_website_path" "$(whoami)" has_write_permissions
+      if [[ "$has_write_permissions" = "false" ]]; then
+        granted_write_permissions="true"
+        chmod u+w sites/default/settings.php
+      fi
+
+      # settings.php is read-only. Enable writing.
+      chmod u+w sites/default
+      sed -i "s/'database' => '$_old_db_name'/'database' => '$_new_db_name'/" sites/default/settings.php
+      sed -i "s/'username' => '$_old_db_user_name'/'username' => '$_old_db_user_name'/" sites/default/settings.php
+      sed -i "s/'password' => '$_old_db_user_pass'/'password' => '$_old_db_user_pass'/" sites/default/settings.php
+
+      # Remember to disable writing!
+      chmod u-w sites/default
+
+      # Revoke writing previledges if they were granted above.
+      if [[ "$granted_write_permissions" = "true" ]]; then
+        chmod u-w sites/default/settings.php
+      fi
+      ;;
+
+    WordPress)
+      sed -i "s/define('DB_NAME', '$_old_db_name')/define('DB_NAME', '$_new_db_name')/" wp-config.php
+      sed -i "s/define('DB_USER', '$_old_db_user_name')/define('DB_USER', '$_new_db_user_name')/" wp-config.php
+      sed -i "s/define('DB_PASSWORD', '$_old_db_user_pass')/define('DB_PASSWORD', '$_new_db_user_pass')/" wp-config.php
+      ;;
+  esac
 }

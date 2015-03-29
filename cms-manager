@@ -140,6 +140,10 @@ if [[ $# -ge 1 ]]; then
       shift
       backup $@
       ;;
+    clone)
+      shift
+      clone $@
+      ;;
     destroy)
       shift
       destroy $@
