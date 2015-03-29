@@ -27,7 +27,7 @@ A CMS-agnostic aproach to managing your hosted websites.
 
 list (1.1): Display list of all hosted websites.
 
-test (1.X): Run tests on a given website. Options define which test(s) are run.
+test (1.x): Run tests on a given website. Options define which test(s) are run.
 
 ----------
 
